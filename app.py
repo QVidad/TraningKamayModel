@@ -417,7 +417,7 @@ def draw_info_text(image, handedness, hand_sign_text):
     return image
 
 def draw_info(image, fps, mode, number):
-    if 1 <= mode <= 3:
+    if mode >=1:
         if mode == 1:
             cv.putText(image, "MODE: Collecting Keypoints (0+)", (10, 90),
                        cv.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1,

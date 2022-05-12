@@ -17,14 +17,14 @@ def get_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--device", type=int, default=0)
-    parser.add_argument("--width", help='cap width', type=int, default=960)
-    parser.add_argument("--height", help='cap height', type=int, default=540)
+    parser.add_argument("--width", help='cap width', type=int)
+    parser.add_argument("--height", help='cap height', type=int)
 
     parser.add_argument('--use_static_image_mode', action='store_true')
     parser.add_argument("--min_detection_confidence",
                         help='min_detection_confidence',
                         type=float,
-                        default=0.7)
+                        default=0.5)
     parser.add_argument("--min_tracking_confidence",
                         help='min_tracking_confidence',
                         type=int,
@@ -56,14 +56,15 @@ def main():
     mp_hands = mp.solutions.hands
     hands = mp_hands.Hands(
         static_image_mode=use_static_image_mode,
-        max_num_hands=2,
+        max_num_hands=1,
         min_detection_confidence=min_detection_confidence,
         min_tracking_confidence=min_tracking_confidence,
     )
 
-    keypoint_classifier = KeyPointClassifier()
-
     # Read labels ###########################################################
+    # initialize tensorflow lite model
+    keypoint_classifier = KeyPointClassifier()
+    # initialize csv file(for the translation label)
     with open('model/keypoint_classifier/keypoint_classifier_label.csv',
               encoding='utf-8-sig') as f:
         keypoint_classifier_labels = csv.reader(f)
@@ -74,7 +75,7 @@ def main():
     # FPS Measurement ########################################################
     cvFpsCalc = CvFpsCalc(buffer_len=10)
 
-    #  ########################################################################
+    #  For collecting data only ########################################################################
     mode = 0
 
     while True:
@@ -93,7 +94,7 @@ def main():
         image = cv.flip(image, 1)  # Mirror display
         debug_image = copy.deepcopy(image)
 
-        # Detection implementation #############################################################
+        # Hand detection implementation #############################################################
         image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
 
         image.flags.writeable = False
@@ -147,6 +148,10 @@ def select_mode(key, mode):
         mode = 3
     if key == 115:  # s
         mode = 4
+    if key == 122:  # z
+        mode = 5
+    if key == 120:  # x
+        mode = 6
     return number, mode
 
 def calc_landmark_list(image, landmarks):
@@ -216,6 +221,16 @@ def logging_csv(number, mode, landmark_list):
             with open(csv_path, 'a', newline="") as f:
                 writer = csv.writer(f)
                 number = number + 30 # change according to number
+                writer.writerow([number, *landmark_list])
+        elif mode == 5:
+            with open(csv_path, 'a', newline="") as f:
+                writer = csv.writer(f)
+                number = number + 40 # change according to number
+                writer.writerow([number, *landmark_list])
+        elif mode == 6:
+            with open(csv_path, 'a', newline="") as f:
+                writer = csv.writer(f)
+                number = number + 50 # change according to number
                 writer.writerow([number, *landmark_list])
     return
 
@@ -434,6 +449,14 @@ def draw_info(image, fps, mode, number):
             cv.putText(image, "MODE: Collecting Keypoints (30+)", (10, 90),
                        cv.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1,
                        cv.LINE_AA)
+        elif mode == 5:
+            cv.putText(image, "MODE: Collecting Keypoints (40+)", (10, 90),
+                       cv.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1,
+                       cv.LINE_AA)
+        elif mode == 6:
+            cv.putText(image, "MODE: Collecting Keypoints (50+)", (10, 90),
+                       cv.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1,
+                       cv.LINE_AA)
         if 0 <= number <= 9:
             if mode == 1:
                 first_num = 0
@@ -443,6 +466,10 @@ def draw_info(image, fps, mode, number):
                 first_num = 2
             elif mode == 4:
                 first_num = 3
+            elif mode == 5:
+                first_num = 4
+            elif mode == 6:
+                first_num = 5
             cv.putText(image, "NUM:"+str(first_num) + str(number), (10, 110),
                        cv.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1,
                        cv.LINE_AA)

@@ -1,6 +1,5 @@
 # Kamay Training Model
-Training the machine learning model using Mediapipe Hands that will be use for the android application<br> ❗ _️**This code is based on this [original repo](https://github.com/Kazuhito00/hand-gesture-recognition-using-mediapipe). **_ ❗
-<br> 
+Training the machine learning model using Mediapipe Hands that will be use for the android application
 
 This repository contains the following contents.
 * Sample program in Pyhton
@@ -62,14 +61,3 @@ The key point coordinates are the ones that have undergone the following preproc
 Open "[keypoint_classification.ipynb](keypoint_classification.ipynb)" in Jupyter Notebook and execute from top to bottom.<br>
 To change the number of training data classes, change the value of "NUM_CLASSES = 3" <br>and modify the label of "model/keypoint_classifier/keypoint_classifier_label.csv" as appropriate.<br><br>
 
-#### X.Model structure
-The image of the model prepared in "[keypoint_classification.ipynb](keypoint_classification.ipynb)" is as follows.
-<img src="https://user-images.githubusercontent.com/37477845/102246723-69c76a00-3f42-11eb-8a4b-7c6b032b7e71.png" width="50%"><br><br>
-
-
-# Reference
-* [MediaPipe](https://mediapipe.dev/)
-* [Training Model using Mediapipe Hands](https://github.com/kinivi/hand-gesture-recognition-mediapipe)
- 
-# License 
-hand-gesture-recognition-using-mediapipe is under [Apache v2 license](LICENSE).
